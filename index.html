@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>🎮 Multiplicaciones Divertidas 🎮 </title>
+<style>
+
+#cajaTutorial {
+    font-size: 26px;
+    text-align: center;
+}
+#fondoAnimado {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+    overflow: hidden;
+    background: linear-gradient(135deg, #fff3e0, #e1f5fe, #f3e5f5); 
+}
+
+.fondoItem {
+    position: absolute; 
+    font-size: 2.5rem;
+    opacity: 0.6;
+    animation: flotar 60s linear infinite;
+    user-select: none;
+}
+.fondoItem {
+    position: absolute;
+    font-size: 2.5rem;
+    opacity: 0.6;
+    animation: flotar 15s linear infinite;
+}
+
+@keyframes flotar {
+    0% { transform: translateY(0vh) rotate(0deg); opacity: 0.3; }
+    10% { opacity: 0.6; }
+    100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+}
+
+body {
+    
+    margin: 0;
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    text-align: center;
+    transition: background 0.6s;
+    overflow: hidden;
+    background: linear-gradient(135deg, #fff3e0, #e1f5fe, #f3e5f5);
+    color: #333;
+}
+
+
+.pantalla {
+    display: none;
+    min-height: 100vh;
+    padding: 15px 12px;
+    box-sizing: border-box;
+    animation: fade .5s ease;
+    overflow-y: auto;
+}
+
+@keyframes fade { from { opacity: 0; transform: scale(.97); } to { opacity: 1; transform: scale(1); } }
+
+h1 { font-size: 2.6rem; margin: 15px 10px 10px; color: #ec4899; text-shadow: 2px 2px 5px rgba(236,72,153,0.3); }
+h2 { font-size: 1.45rem; margin: 12px 0 18px; color: #374151; }
+
+input {
+    font-size: 1.45rem;
+    font-weight: bold;
+    padding: 14px 20px;
+    width: 88%;
+    max-width: 380px;
+    border: 5px solid #fbbf24;
+    border-radius: 24px;
+    text-align: center;
+    background: #ffffff;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.18);
+    color: #1e293b;
+    margin-bottom: 14px;
+}
+
+input::placeholder {
+    color: #9ca3af;
+    font-weight: normal;
+    font-style: italic;
+}
+
+.boton {
+    font-size: 1.35rem;
+    padding: 14px 32px;
+    margin: 10px 6px;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all .3s;
+    box-shadow: 0 6px 16px rgba(249,115,22,0.4);
+    background: linear-gradient(45deg, #f97316, #fb923c);
+    color: white;
+}
+
+.boton:hover { transform: scale(1.07) translateY(-2px); box-shadow: 0 10px 25px rgba(249,115,22,0.5); }
+.boton:disabled {
+    background: #d1d5db !important;
+    box-shadow: none;
+    opacity: 0.75;
+    cursor: not-allowed;
+    transform: none;
+}
+
+#toggleModo { position: fixed; top: 12px; right: 12px; z-index: 1000; font-size: 1.6rem; padding: 8px 14px; }
+
+.avatar-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+    margin: 10px 0 15px;
+}
+
+.avatar {
+    font-size: 4.2rem;
+    cursor: pointer;
+    padding: 14px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.65);
+    transition: all 0.25s;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    border: 4px solid transparent;
+    min-width: 65px;
+    min-height: 65px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.avatar:hover, .avatar.seleccionado {
+    transform: scale(1.18) rotate(6deg);
+    background: #fef08a;
+    border-color: #f59e0b;
+    box-shadow: 0 8px 20px rgba(245,158,11,0.45);
+}
+#preview {
+    font-size: 3rem;
+    min-height: 60px;
+    margin: 8px 0 15px;
+    color: #f97316;
+}
+.respuesta { 
+    font-size: 32px; 
+    padding: 20px 28px; 
+    margin: 12px; 
+    border-radius: 20px; 
+    display: inline-block; 
+    cursor: pointer; 
+    width: 130px; 
+    transition: .3s; 
+    box-shadow: 0 5px 12px rgba(0,0,0,.2); 
+    background: #60a5fa;
+    color: white;
+}
+.respuesta:hover { transform: scale(1.15); }
+.respuesta.correcta { background: #4ade80 !important; color: black; transform: scale(1.22); box-shadow: 0 0 25px #22c55e; }
+.respuesta.incorrecta { background: #f87171 !important; color: black; transform: scale(0.92); box-shadow: 0 0 20px #ef4444; }
+
+.topbar { font-size: 22px; margin-bottom: 10px; }
+.pregunta { font-size: 80px; margin: 20px; animation: pulse 1.2s infinite alternate; }
+@keyframes pulse { from { transform: scale(1); } to { transform: scale(1.06); } }
+
+#avatarJuego { 
+    position: fixed; 
+    font-size: 130px; 
+    z-index: 999; 
+    pointer-events: none; 
+    user-select: none; 
+    animation: girar 18s linear infinite; 
+    transition: all 0.6s ease; 
+    text-shadow: 0 0 12px rgba(255,255,255,0.9); 
+}
+#avatarJuego.activo { transform: scale(1.4) translateY(-40px) !important; filter: brightness(1.4); }
+@keyframes girar { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+#burbujaAvatar { 
+    position: fixed; 
+    background: rgba(255,250,210,0.95); 
+    color: #000; 
+    padding: 22px 30px; 
+    border-radius: 20px; 
+    font-size: 28px; 
+    font-weight: bold; 
+    box-shadow: 0 12px 32px rgba(0,0,0,0.5); 
+    pointer-events: none; 
+    white-space: pre-line; 
+    text-align: center; 
+    min-width: 360px; 
+    max-width: 600px; 
+    display: none; 
+    z-index: 1001; 
+    border: 4px solid #ffd700; 
+}
+#burbujaAvatar.grande {
+    width: 83vw;
+    max-width: 790px;
+    height: 36vh;
+    max-height: 380px;
+    line-height: 1.4;
+    font-size: 22px;
+    top: 90%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    overflow-y: hidden;
+    text-align: center;
+    padding: 16px;
+    background: rgba(255,250,210,0.86);
+    border-radius: 19px;
+    border: 5px solid #f59e0b;
+}
+
+#burbujaAvatar.grande.no-scrollbar {
+    overflow: hidden;
+}
+
+#burbujaAvatar.grande::-webkit-scrollbar {
+    display: none;
+}
+
+#pregunta {
+    z-index: 1100;
+    position: relative;
+}
+
+#contenidoTablas { 
+    display: flex; 
+    flex-wrap: wrap; 
+    justify-content: center; 
+    gap: 24px; 
+    padding: 20px; 
+    max-height: 68vh; 
+    overflow-y: auto; 
+}
+.tabla-card {
+    background: rgba(255,255,255,0.75);
+    border-radius: 16px;
+    padding: 18px 24px;
+    min-width: 220px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    font-size: 1.35rem;
+    text-align: left;
+    line-height: 1.55;
+}
+
+
+.tabla-card h3 {
+    margin: 0 0 12px 0;
+    color: #ec4899;
+    text-align: center;
+    font-size: 1.8rem;
+}
+
+.inputTabla {
+    width: 70px;
+    font-size: 1.25rem;
+    text-align: center;
+    border: 3px solid #fbbf24;
+    border-radius: 12px;
+    background: #fff;
+    margin: 4px 5px;
+}
+
+.explicacion {
+    margin: 30px auto;
+    padding: 35px;
+    max-width: 85%;
+    min-width: 300px;
+    min-height: 250px;
+
+    font-size: 26px;
+    font-weight: bold;
+    line-height: 1.8; /* 🔥 mejora lectura */
+
+    border-radius: 20px;
+    background: rgba(255,255,255,0.95);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+
+    text-align: center;
+
+    white-space: pre-line; /* 🔥 respeta saltos */
+}
+.explicacion.correcta {
+    color: #15803d;
+    background: rgba(187,247,208,0.7);
+}
+.explicacion.incorrecta {
+    color: #b91c1c;
+    background: rgba(254,226,226,0.8);
+}
+
+#medallaFinal {
+    font-size: 6rem;
+    margin: 20px 0 10px;
+    text-shadow: 0 0 15px rgba(0,0,0,0.3);
+}
+#scoreDetalles {
+    font-size: 1.4rem;
+    line-height: 1.6;
+    margin: 15px 0;
+}
+
+#btnRegresarGlobal:hover{
+transform:scale(1.1);
+background:#dc2626;
+}
+
+
+#escenarioGlobos{
+position:relative;
+height:65vh;
+width:100%;
+max-width:900px;
+margin:auto;
+}
+
+.globo{
+position:absolute;
+width:90px;
+height:110px;
+border-radius:50% 50% 50% 50% / 60% 60% 40% 40%;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:28px;
+font-weight:bold;
+color:white;
+text-shadow:2px 2px 4px #000;
+cursor:pointer;
+box-shadow:0 8px 20px rgba(0,0,0,0.35);
+transition:.2s;
+}
+
+.globo:hover{
+transform:scale(1.15) translateY(-10px);
+}
+
+.globo::after{
+content:"";
+position:absolute;
+bottom:-20px;
+left:50%;
+width:4px;
+height:20px;
+background:#444;
+transform:translateX(-50%);
+}
+
+#jirafa{
+position:fixed;
+bottom:10px;
+right:40px;
+font-size:170px;
+z-index:20;
+pointer-events:none;
+animation:jirafaMover 3s ease-in-out infinite;
+}
+
+@keyframes jirafaMover{
+0%{transform:translateY(0)}
+50%{transform:translateY(-12px)}
+100%{transform:translateY(0)}
+}
+.globo-feliz{
+position:fixed;
+font-size:40px;
+pointer-events:none;
+animation:subirGlobo 2.5s linear forwards;
+}
+
+@keyframes subirGlobo {
+    0% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(-500px); opacity: 0; }
+}
+/* 🔥 QUITAR FLECHITAS DE INPUT NUMBER */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+</style>
+
+</head>
+<body class="modo-claro">
+<div id="fondoAnimado"></div>
+
+<div id="avatarJuego"></div>
+<div id="burbujaAvatar"></div>
+
+
+
+
+
+<div id="login" class="pantalla" style="display:block; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh;">
+    <h1>🔐 Iniciar Sesión 🔐</h1>
+    <p><strong>Ingresa tu <strong>usuario</strong> y <strong>contraseña</strong> </p>
+    <input id="loginUsuario" type="number" placeholder="Usuario (1-5)" min="1" max="5">
+    <input id="loginPass" type="number" placeholder="Contraseña (1-5)" min="1" max="5">
+    <button id="btnLogin" class="boton">Ingresar</button>
+    <p id="mensajeLogin" style="color:red; font-weight:bold;"></p>
+</div>
+
+
+<div id="inicio" class="pantalla">
+    <h1>🎮 ¡Multiplicaciones Divertidas! 🎮</h1>
+    <h2>¡Hola! ¿Cómo te llamas?</h2>
+    <p style="font-size: 1.15rem; margin: 8px 0 20px; color: #555555; max-width: 90%;">
+    </p>
+    
+    <input id="nombre" placeholder="Escribe tu nombre aquí 😊" autocomplete="off">
+    
+    <h2>Elige tu avatar favorito:</h2>
+    
+    <div class="avatar-container">
+        <span class="avatar" onclick="seleccionarAvatar('🐶')">🐶</span>
+        <span class="avatar" onclick="seleccionarAvatar('🐱')">🐱</span>
+        <span class="avatar" onclick="seleccionarAvatar('🐵')">🐵</span>
+        <span class="avatar" onclick="seleccionarAvatar('🦊')">🦊</span>
+        <span class="avatar" onclick="seleccionarAvatar('🐼')">🐼</span>
+        <span class="avatar" onclick="seleccionarAvatar('🐸')">🐸</span>
+        <span class="avatar" onclick="seleccionarAvatar('🐺')">🐺</span> 
+        <span class="avatar" onclick="seleccionarAvatar('🐦')">🐦</span> 
+        <span class="avatar" onclick="seleccionarAvatar('🐴')">🐴</span> 
+        <span class="avatar" onclick="seleccionarAvatar('🐬')">🐬</span> 
+        <span class="avatar" onclick="seleccionarAvatar('🐿️')">🐿️</span> 
+        <span class="avatar" onclick="seleccionarAvatar('🐻')">🐻</span> 
+        <span class="avatar" onclick="seleccionarAvatar('🐧')">🐧</span>
+        <span class="avatar" onclick="seleccionarAvatar('🐨')">🐨</span> 
+        <span class="avatar" onclick="seleccionarAvatar('🦏')">🦏</span>
+
+
+    </div>
+    
+    <div id="preview">🎈 ¿Quién serás? 🎈</div>
+    
+    <button id="btnComenzar" class="boton" disabled onclick="guardar()">🚀 ¡JUGAR YA! 🚀 </button>
+</div>
+
+<button id="btnRegresarGlobal" class="boton regreso" onclick="regresarPantalla()" 
+style="position:fixed; top:12px; right:80px; z-index:1000; display:none;">
+⬅ Regresar
+<button id="btnTutorial" class="boton" onclick="mostrarTutorial()" 
+style="position:fixed; top:12px; left:60px; z-index:1000; display:none;">
+📘 Tutorial
+</button>
+</button>
+
+<div id="tutorial" class="pantalla">
+    <h1>📘 ¿Cómo jugar? 📘</h1>
+
+    <div id="cajaTutorial" class="explicacion">
+        <p id="textoTutorial">😊 Bienvenido al juego 😊</p>
+    </div>
+
+    <button class="boton" onclick="anteriorPaso()">⬅ Anterior</button>
+    <button class="boton" onclick="siguientePaso()">Siguiente ➡</button>
+    <br><br>
+    <button class="boton" onclick="irDesdeTutorial()">🚀 Ir al juego 🚀</button>
+</div>
+
+<div id="menu" class="pantalla">
+    <h1 id="saludo"></h1>
+    <h2>¿Qué tabla quieres practicar?</h2>
+    <div id="tablas"></div>
+    <button class="boton" onclick="mostrarTablas()">📚 TABLAS MÁGICAS 📚 </button>
+</div>
+
+<div id="tablasOrden" class="pantalla">
+    <h1 id="tituloTablas">✏️ Completa las Tablas - Fácil</h1>
+    <div id="contenidoTablas"></div>
+    <button class="boton" onclick="verificarCompletar()">✅ Verificar Respuestas</button>
+    <button class="boton" onclick="reiniciarCompletar()">🔄 Reiniciar</button>
+    <button class="boton" id="botonSiguiente" onclick="avanzarNivel()">➡️ Siguiente Nivel</button>
+</div>
+
+<div id="juego" class="pantalla">
+
+<div class="topbar">
+<span id="puntos">🏆 0</span>  |  <span id="progreso">5/5</span>
+</div>
+
+<h2>📚 Resuelve esta multiplicación 📚 </h2>
+
+<div id="pregunta" class="pregunta"></div>
+
+<div id="escenarioGlobos">
+<div id="jirafa">🦒</div>
+
+</div>
+
+</div>
+    <div class="topbar">
+    <span id="puntos">🏆 </span>5/5<span id="progreso"></span>
+    </div>
+    <h2>📚 Resuelve esta multiplicación</h2>
+    <div id="pregunta" class="pregunta"></div>
+    <div id="respuestas"></div>
+</div>
+
+<div id="final" class="pantalla">
+    <h1>🏆 ¡Partida terminada!</h1>
+    <h2 id="resultadoNombre"></h2>
+    <div id="medallaFinal"></div>
+    <div id="scoreDetalles"></div>
+</div>
+
+<script>
+let vocesDisponibles = [];
+
+speechSynthesis.onvoiceschanged = () => {
+    vocesDisponibles = speechSynthesis.getVoices();
+};
+    function crearFondoAnimado() {
+    const fondo = document.getElementById("fondoAnimado");
+    const elementos = ["🐶","🐱","🐵","🦊","🐼","🐸","🐺","🐦","🐴","🐬","🐿️","🐻","🐧","🐨","🦏","1️⃣","2️⃣","3️⃣","4️⃣","5️⃣","6️⃣","7️⃣","8️⃣","9️⃣","0️⃣","🎈"];
+
+    for (let i = 0; i < 20; i++) {
+        const item = document.createElement("div");
+        item.className = "fondoItem";
+        item.innerText = elementos[Math.floor(Math.random() * elementos.length)];
+        item.style.left = Math.random() * 100 + "vw";
+        item.style.top = Math.random() * 100 + "vh";
+        item.style.fontSize = (20 + Math.random()*40) + "px";
+        item.style.animationDuration = (45 + Math.random()*25) + "s";
+        item.style.animationDelay = Math.random()*5 + "s";
+        fondo.appendChild(item);
+    }
+}
+let audioContext;
+let timeoutError = null;
+function initAudio() {
+    if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+}
+
+function playTone(frequency, duration, type = 'sine') {
+    initAudio();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+    oscillator.type = type;
+    
+    gainNode.gain.setValueAtTime(0.6, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.02, audioContext.currentTime + duration);
+    
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + duration);
+}
+
+function reproducirCorrecto() {
+    // Tono ascendente para correcto
+    playTone(523, 0.2); // Do
+    setTimeout(() => playTone(659, 0.2), 100); // Mi
+    setTimeout(() => playTone(784, 0.3), 200); // Sol
+}
+
+function reproducirIncorrecto() {
+    // Tono descendente para incorrecto
+    playTone(392, 0.3); // Sol bajo
+    setTimeout(() => playTone(330, 0.3), 150); // Mi bajo
+    setTimeout(() => playTone(262, 0.4), 300); // Do bajo
+}
+function hablarTutorial(texto) {
+
+    let textoVoz = texto
+        .replace(/\+/g, " más ")
+        .replace(/=/g, " es igual a ")
+        .replace(/×/g, " por ");
+
+    textoVoz = textoVoz.replace(/[^\p{L}\p{N}\p{P}\p{Z}\n]/gu, '');
+
+    const mensaje = new SpeechSynthesisUtterance(textoVoz);
+
+    mensaje.lang = "es-ES";
+    mensaje.rate = 0.9;
+    mensaje.pitch = 1.2;
+    mensaje.volume = 1;
+
+    let voz =
+        vocesDisponibles.find(v => v.lang === "es-MX") ||
+        vocesDisponibles.find(v => v.lang === "es-ES") ||
+        vocesDisponibles.find(v => v.lang.startsWith("es"));
+
+    if (voz) {
+        const vozFemenina = vocesDisponibles.find(v =>
+            v.lang.startsWith("es") &&
+            (v.name.toLowerCase().includes("female") ||
+             v.name.toLowerCase().includes("maria") ||
+             v.name.toLowerCase().includes("sofia") ||
+             v.name.toLowerCase().includes("paulina") ||
+             v.name.toLowerCase().includes("google"))
+        );
+
+        mensaje.voice = vozFemenina || voz;
+    }
+
+    speechSynthesis.cancel();
+    speechSynthesis.speak(mensaje);
+}
+crearFondoAnimado();
+
+const niveles = ['Fácil', 'Intermedio', 'Difícil'];
+let nivelActual = 0;
+
+    function lanzarGlobos(){
+
+for(let i=0;i<12;i++){
+
+let globo=document.createElement("div");
+globo.className="globo-feliz";
+globo.innerText="🎈";
+
+globo.style.left=Math.random()*100+"vw";
+globo.style.bottom="-50px";
+
+document.body.appendChild(globo);
+
+setTimeout(()=>{
+globo.remove();
+},2500);
+
+}
+
+}
+
+let avatar = "";
+let nombreJugador = "";
+let tablaActual;
+let puntos = 0;
+let aciertos = 0;
+let preguntasHechas = 0;
+        
+let respuestaCorrecta;
+let cronometro;
+let bloqueado = false;
+
+const TOTAL_PREGUNTAS = 5;
+
+const burbujaAv    = document.getElementById("burbujaAvatar");
+const av           = document.getElementById("avatarJuego");
+const btnComenzar  = document.getElementById("btnComenzar");
+const inputNombre  = document.getElementById("nombre");
+const preview      = document.getElementById("preview");
+
+const loginUsuario = document.getElementById("loginUsuario");
+const loginPass    = document.getElementById("loginPass");
+const mensajeLogin  = document.getElementById("mensajeLogin");
+document.getElementById("btnLogin").addEventListener("click", function () {
+    activarAudio();
+    speechSynthesis.getVoices(); // 🔥 importante
+    verificarLogin();
+});
+function verificarLogin() {
+    const usuario = parseInt(loginUsuario.value);
+    const pass = parseInt(loginPass.value);
+
+    if (usuario >= 1 && usuario <= 5 && pass === usuario) {
+
+        mostrar("inicio");
+        mensajeLogin.innerText = "";
+    } else {
+        mensajeLogin.innerText = "❌ Usuario o contraseña incorrectos ❌";
+    }
+}
+function mostrar(id) {
+    speechSynthesis.cancel();
+    document.querySelectorAll(".pantalla").forEach(p => p.style.display = "none");
+    
+   if (id === "login") {
+    document.getElementById(id).style.display = "flex";
+} else {
+    document.getElementById(id).style.display = "block";
+    const btnTutorial = document.getElementById("btnTutorial");
+
+if (id === "inicio" || id === "menu" || id === "tablasOrden") {
+    btnTutorial.style.display = "block";
+} else {
+    btnTutorial.style.display = "none";
+}
+}
+    
+    av.classList.remove("activo");
+    if (id === "juego") av.classList.add("activo");
+
+    const botonRegresar = document.getElementById("btnRegresarGlobal");
+
+    if (id === "login") {
+        botonRegresar.style.display = "none";
+    } else {
+        botonRegresar.style.display = "block";
+    }
+}
+
+function checkInicioCompleto() {
+    const nombreOk = inputNombre.value.trim().length > 0;
+    const avatarOk = avatar !== "";
+    btnComenzar.disabled = !(nombreOk && avatarOk);
+}
+
+inputNombre.addEventListener("input", checkInicioCompleto);
+
+function seleccionarAvatar(a) {
+    avatar = a;
+    preview.innerText = a;
+    document.querySelectorAll('.avatar').forEach(el => el.classList.remove('seleccionado'));
+    event.target.classList.add('seleccionado');
+    checkInicioCompleto();
+}
+
+function guardar() {
+    if (btnComenzar.disabled) return;
+    nombreJugador = inputNombre.value.trim() || "Valiente Matemático";
+    mostrar("menu");
+    document.getElementById("saludo").innerText = `${avatar} ¡Hola ${nombreJugador}!`;
+    hablarAvatar(`¡Bienvenid@ ${nombreJugador}! Vamos a divertirnos!`, 3200);
+}
+
+
+for (let i = 1; i <= 10; i++) {
+    let b = document.createElement("button");
+    b.classList.add("boton");
+    b.textContent = `Tabla del ${i}`;
+    b.onclick = () => iniciarJuego(i);
+    document.getElementById("tablas").appendChild(b);
+}
+
+
+function iniciarJuego(tabla) {
+    tablaActual = tabla;
+    puntos = 0;
+    aciertos = 0;
+    preguntasHechas = 0;
+
+    mostrar("juego");
+    nuevaPregunta();
+}
+
+function nuevaPregunta() {
+    if (preguntasHechas >= TOTAL_PREGUNTAS) {
+        finalizar();
+        return;
+    }
+    
+    bloqueado = false;
+    preguntasHechas++;
+    document.getElementById("progreso").innerText = `${preguntasHechas}/${TOTAL_PREGUNTAS}`;
+    
+    const num1 = Math.floor(Math.random() * 10) + 1;
+    const num2 = tablaActual;
+    respuestaCorrecta = num1 * num2;
+    
+    document.getElementById("pregunta").innerText = `${num1} × ${num2}`;
+    document.getElementById("respuestas").innerHTML = "";
+    
+    generarRespuestas(respuestaCorrecta);
+    
+}
+function activarAudio() {
+    initAudio();
+}
+function generarRespuestas(correcta) {
+
+    const escenario = document.getElementById("escenarioGlobos");
+    escenario.innerHTML = "";
+
+    const respuestas = [correcta];
+
+    while (respuestas.length < 12) {
+        const falsa = Math.floor(Math.random() * (correcta + 40)) + 1;
+        if (!respuestas.includes(falsa)) {
+            respuestas.push(falsa);
+        }
+    }
+
+    // Mezclar respuestas para que la correcta no esté siempre en el mismo globo
+    function shuffleArray(a) {
+        for (let i = a.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [a[i], a[j]] = [a[j], a[i]];
+        }
+    }
+
+    shuffleArray(respuestas);
+
+    const posiciones = [
+        {left:10,top:10},{left:25,top:18},{left:38,top:8},
+        {left:52,top:22},{left:65,top:12},{left:78,top:25},
+        {left:88,top:15},{left:15,top:45},{left:30,top:38},
+        {left:45,top:50},{left:60,top:42},{left:75,top:55}
+    ];
+
+respuestas.forEach((num,i)=>{
+
+const globo=document.createElement("div");
+globo.className="globo";
+
+globo.style.background=[
+"#ff6b6b","#4ecdc4","#45b7d1","#96c93d",
+"#feca57","#ff9ff3","#a55eea","#778beb",
+"#ffcccc","#c7ecee"
+][i%10];
+
+globo.style.left=posiciones[i].left+"%";
+globo.style.top=posiciones[i].top+"%";
+
+globo.innerText=num;
+
+globo.onclick=()=>{
+
+if(!bloqueado){
+
+bloqueado=true;
+verificar(num);
+
+globo.style.transform="scale(1.5)";
+globo.style.opacity="0";
+
+}
+
+};
+
+escenario.appendChild(globo);
+
+});
+
+}
+function verificar(respuesta) {
+    clearInterval(cronometro);
+    const es_correcta = respuesta === respuestaCorrecta;
+
+    const botones = document.querySelectorAll(".respuesta");
+    botones.forEach(btn => {
+        if (parseInt(btn.innerText) === respuestaCorrecta) {
+            btn.classList.add("correcta");
+        }
+        if (parseInt(btn.innerText) === respuesta && respuesta !== -1) {
+            btn.classList.add(es_correcta ? "correcta" : "incorrecta");
+        }
+        btn.disabled = true;
+    });
+
+    bloqueado = true;
+
+    if (es_correcta) {
+        aciertos++;
+        puntos += 10;
+        reproducirCorrecto();
+        lanzarGlobos();
+        hablarAvatar("🎉 ¡Excelente! ¡Muy bien! 🎉", 4000, false);
+
+        setTimeout(() => {
+            nuevaPregunta();
+        }, 3400);
+
+    } else {
+        reproducirIncorrecto();
+
+        const textoPregunta = document.getElementById("pregunta").innerText;
+        const partes = textoPregunta.split(" × ");
+        const num1 = parseInt(partes[0]);
+        const num2 = parseInt(partes[1]);
+
+        let suma = "";
+        for (let i = 0; i < num1; i++) {
+            suma += num2;
+            if (i < num1 - 1) suma += " + ";
+        }
+
+        const duracionError = 10000;
+        hablarAvatar(
+            `¡Ups! 😅 La respuesta correcta es ${respuestaCorrecta}\n\n` +
+            `Vamos a entenderlo paso a paso:\n\n` +
+            `${num1} × ${num2} significa sumar ${num2} ${num1} veces\n\n` +
+            `${suma} = ${respuestaCorrecta}\n\n` +
+            `Imagina ${num1} grupos con ${num2} manzanas 🍎`,
+            duracionError,
+            true
+        );
+
+    timeoutError = setTimeout(nuevaPregunta, duracionError);
+    }
+
+    document.getElementById("puntos").innerText = `🏆 ${puntos}`;
+}
+
+function finalizar() {
+
+    clearInterval(cronometro);
+    const porcentaje = (aciertos / TOTAL_PREGUNTAS) * 100;
+    let medalla = "😔";
+    
+    if (porcentaje === 100) medalla = "🏆";
+    else if (porcentaje >= 80) medalla = "🥇";
+    else if (porcentaje >= 60) medalla = "🥈";
+    else if (porcentaje >= 40) medalla = "🥉";
+    
+    document.getElementById("medallaFinal").innerText = medalla;
+    document.getElementById("resultadoNombre").innerText = `${avatar} ${nombreJugador}`;
+    document.getElementById("scoreDetalles").innerHTML = `
+        <strong>Aciertos:</strong> ${aciertos}/${TOTAL_PREGUNTAS}<br>
+        <strong>Puntos:</strong> ${puntos}<br>
+        <strong>Porcentaje:</strong> ${porcentaje.toFixed(1)}%<br>
+
+    `;
+    
+    hablarAvatar(`¡Juego terminado! ${medalla}`, 2500);
+    mostrar("final");
+}
+
+function hablarAvatar(texto, duracion, grande = false) {
+    const escenario = document.getElementById("escenarioGlobos");
+
+    burbujaAv.innerText = texto;
+    burbujaAv.style.display = "block";
+    burbujaAv.classList.toggle("grande", grande);
+
+    if (grande) {
+        escenario.style.pointerEvents = "none";
+        burbujaAv.classList.add("no-scrollbar");
+    } else {
+        escenario.style.pointerEvents = "auto";
+        burbujaAv.classList.remove("no-scrollbar");
+    }
+
+    if (!grande) {
+        burbujaAv.style.left = "50%";
+        burbujaAv.style.top = "50%";
+        burbujaAv.style.transform = "translate(-50%, -50%)";
+    } else {
+        // Para modo grande, la posicion se define vía clase, pero aun queremos centrar
+        burbujaAv.style.left = "50%";
+        burbujaAv.style.top = "50%";
+        burbujaAv.style.transform = "translate(-50%, -50%)";
+    }
+
+    if (burbujaAv.timeoutId) clearTimeout(burbujaAv.timeoutId);
+
+    burbujaAv.timeoutId = setTimeout(() => {
+        burbujaAv.style.display = "none";
+        burbujaAv.classList.remove("grande");
+        escenario.style.pointerEvents = "auto";
+        burbujaAv.timeoutId = null;
+    }, duracion);
+}
+
+function mostrarTablas() {
+    const contenido = document.getElementById("contenidoTablas");
+    contenido.innerHTML = "";
+    
+    let tablasDelNivel;
+    if (nivelActual === 0) {
+        tablasDelNivel = [1, 2, 3];
+    } else if (nivelActual === 1) {
+        tablasDelNivel = [4, 5, 6];
+    } else {
+        tablasDelNivel = [7, 8, 9, 10];
+    }
+    
+    for (let tabla of tablasDelNivel) {
+        const card = document.createElement("div");
+        card.classList.add("tabla-card");
+        
+        let html = `<h3>Tabla del ${tabla}</h3>`;
+        for (let i = 1; i <= 10; i++) {
+            const correcta = tabla * i;
+            const mostrarNum1 = Math.random() > 0.5;
+            if (mostrarNum1) {
+                html += `<div>${tabla} × <input type="number" class="inputTabla" data-correcta="${correcta}" data-tabla="${tabla}" data-i="${i}" placeholder="?" min="1" max="100"> = ${correcta}</div>`;
+            } else {
+                html += `<div>${tabla} × ${i} = <input type="number" class="inputTabla" data-correcta="${correcta}" data-tabla="${tabla}" data-i="${i}" placeholder="?" min="1" max="100"></div>`;
+            }
+        }
+        
+        card.innerHTML = html;
+        contenido.appendChild(card);
+    }
+    
+    mostrar("tablasOrden");
+}
+
+function verificarCompletar() {
+    const inputs = document.querySelectorAll('.inputTabla');
+    let todasCorrectas = true;
+    const errores = [];
+    
+    inputs.forEach(input => {
+        const correcta = parseInt(input.dataset.correcta, 10);
+        const valor = parseInt(input.value, 10);
+        if (valor === correcta) {
+            input.style.borderColor = 'green';
+            input.style.backgroundColor = '#d4edda';
+        } else {
+            input.style.borderColor = 'red';
+            input.style.backgroundColor = '#f8d7da';
+            todasCorrectas = false;
+            errores.push({ tabla: input.dataset.tabla, i: input.dataset.i, correcta, valor });
+        }
+    });
+    
+    if (todasCorrectas) {
+        reproducirCorrecto();
+
+        if (nivelActual < niveles.length - 1) {
+            hablarAvatar(`¡Perfecto! Nivel ${niveles[nivelActual]} completado. Pulsa “Siguiente Nivel” para continuar.`, 4000);
+        } else {
+            hablarAvatar('🎉 ¡Felicidades! Completaste Difícil. Has terminado todas las tablas. 🎉', 4500);
+            setTimeout(() => {
+                mostrar('menu');
+                nivelActual = 0;
+                document.getElementById('tituloTablas').innerText = `✏️ Completa las Tablas ✏️ - ${niveles[nivelActual]}`;
+                document.getElementById('contenidoTablas').innerHTML = '';
+            }, 1700);
+        }
+    } else {
+        reproducirIncorrecto();
+        let mensaje = 'Vamos a corregirlo juntos:\n';
+        errores.forEach(err => {
+            mensaje += `${err.tabla} × ${err.i} = ${err.correcta} (no ${err.valor || 'vacío'})\n`;
+        });
+        hablarAvatar(mensaje, 7000, true);
+    }
+}
+
+function reiniciarCompletar() {
+    document.querySelectorAll('.inputTabla').forEach(input => {
+        input.value = '';
+        input.style.borderColor = '#fbbf24';
+        input.style.backgroundColor = '#fff';
+    });
+}
+
+function avanzarNivel() {
+    if (nivelActual < niveles.length - 1) {
+        nivelActual++;
+        document.getElementById('tituloTablas').innerText = `✏️ Completa las Tablas ✏️ - ${niveles[nivelActual]}`;
+        mostrarTablas();
+    } else {
+
+        hablarAvatar(' 🎉 ¡Felicidades! Has completado el juego de las Tablas. 🎉', 4000);
+        setTimeout(() => {
+            mostrar('menu');
+            nivelActual = 0;
+            document.getElementById('tituloTablas').innerText = `✏️ Completa las Tablas ✏️- ${niveles[nivelActual]}`;
+            document.getElementById('contenidoTablas').innerHTML = '';
+        }, 1500);
+    }
+}
+let pasoTutorial = 0;
+
+const pasos = [
+
+"👋 ¡Hola, niños y niñas! 👋\n\n🎮 Vamos a aprender jugando y a descubrir el mundo de las multiplicaciones de forma divertida 🎮",
+
+"🎯 Tu misión es muy simple:\n\nResolver cada multiplicación correctamente ",
+
+"🧠 Ejemplo:\n\n3 x 4\n\nSignifica sumar varias veces el mismo número ",
+
+"👉 En este caso:\n\n4 + 4 + 4 ",
+
+"🍎 Imagina esto:\n\nTienes 3 grupos\n\nY cada grupo tiene 4 manzanas ",
+
+"👉 Entonces cuentas:\n\n4 + 4 + 4\n\nEs igual a 12 ",
+
+"🎈 En el juego aparecerán globos con diferentes números ",
+
+"👆 Debes tocar el globo\n\nQue tenga la respuesta correcta  ",
+
+"🎉 Si aciertas:\n\nGanas puntos y verás cosas divertidas ",
+
+"😅 Si te equivocas:\n\nNo pasa nada\n\nYo te explico paso a paso ",
+
+"🏆 Al final:\n\nGanarás una medalla según tu desempeño ",
+
+"💡 Consejo:\n\nPiensa con calma\n\n¡Tú puedes hacerlo! ",
+
+"🚀 ¿Listo?\n\n¡Vamos a empezar la aventura matemática! "
+];
+function mostrarTutorial() {
+    pasoTutorial = 0;
+    actualizarTutorial();
+    mostrar("tutorial");
+}
+function irDesdeTutorial() {
+    if (nombreJugador === "" || avatar === "") {
+
+        setTimeout(() => {
+            mostrar("inicio");
+        }, 1500);
+
+    } else {
+        mostrar("menu");
+
+    }
+}
+
+function actualizarTutorial() {
+    const texto = pasos[pasoTutorial];
+    const caja = document.getElementById("cajaTutorial");
+
+    document.getElementById("textoTutorial").innerText = texto;
+
+    // 🔥 animación divertida
+    caja.style.transform = "scale(0.9)";
+    setTimeout(() => {
+        caja.style.transform = "scale(1)";
+    }, 150);
+
+    // 🔊 sonido suave
+    playTone(700, 0.08);
+
+    setTimeout(() => {
+        hablarTutorial(texto);
+    }, 200);
+}
+
+function siguientePaso() {
+    if (pasoTutorial < pasos.length - 1) {
+        pasoTutorial++;
+        actualizarTutorial();
+    } else {
+
+
+        if (nombreJugador === "" || avatar === "") {
+            setTimeout(() => {
+                mostrar("inicio");
+            }, 1500);
+        } else {
+          setTimeout(() => {
+                mostrar("menu");
+            }, 1200);
+
+        }
+    }
+}
+
+function anteriorPaso() {
+    if (pasoTutorial > 0) {
+        pasoTutorial--;
+        actualizarTutorial();
+    }
+}
+
+function regresarPantalla() {
+
+    // 🔥 Si estás en tutorial → regresar a inicio
+    if (document.getElementById("tutorial").style.display === "block") {
+        mostrar("inicio");
+        return;
+    }
+
+    const burbuja = document.getElementById("burbujaAvatar");
+
+    // ✅ CORREGIDO (sin espacio)
+    if (burbuja.style.display === "block") {
+        burbuja.style.display = "none";
+
+        if (burbuja.timeoutId) {
+            clearTimeout(burbuja.timeoutId);
+            burbuja.timeoutId = null;
+        }
+
+        // 🔥 MUY IMPORTANTE: cancelar explicación larga
+        if (timeoutError) {
+            clearTimeout(timeoutError);
+            timeoutError = null;
+        }
+         const escenario = document.getElementById("escenarioGlobos");
+         escenario.style.pointerEvents = "auto";
+        bloqueado = false;
+    }
+
+    if (document.getElementById("login").style.display === "block") {
+        return;
+    }
+
+    if (document.getElementById("juego").style.display === "block") {
+        mostrar("menu");
+        return;
+    }
+
+    if (document.getElementById("tablasOrden").style.display === "block") {
+        mostrar("menu");
+        return;
+    }
+
+    if (document.getElementById("menu").style.display === "block") {
+        mostrar("inicio");
+        return;
+    }
+
+    if (document.getElementById("inicio").style.display === "block") {
+        mostrar("login");
+        return;
+    }
+
+    if (document.getElementById("final").style.display === "block") {
+        mostrar("menu");
+        return;
+    }
+}
+
+</script>
+</body>
+</html>ç
