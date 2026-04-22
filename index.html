@@ -212,7 +212,7 @@ input::placeholder {
     max-height: 70vh;
     line-height: 1.4;
     font-size: 22px;
-    top: 80%;
+    top: 70%;
     left: 50%;
     transform: translate(-50%, -50%);
     overflow-y: auto;
@@ -1103,10 +1103,11 @@ function hablarAvatar(texto, duracion, grande = false) {
         burbujaAv.style.left = "50%";
         burbujaAv.style.top = "50%";
         burbujaAv.style.transform = "translate(-50%, -50%)";
-    } else {
+} else {
         burbujaAv.style.left = "50%";
-        burbujaAv.style.top = "80%";
-        burbujaAv.style.transform = "translate(-50%, -50%)";
+        burbujaAv.style.top = "auto";
+        burbujaAv.style.bottom = "20px";
+        burbujaAv.style.transform = "translateX(-50%)";
     }
 
     if (burbujaAv.timeoutId) clearTimeout(burbujaAv.timeoutId);
