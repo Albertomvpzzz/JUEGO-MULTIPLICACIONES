@@ -212,7 +212,7 @@ input::placeholder {
     max-height: 70vh;
     line-height: 1.4;
     font-size: 22px;
-    top: 75%;
+    top: 88%;
     left: 50%;
     transform: translate(-50%, -50%);
     overflow-y: auto;
@@ -486,7 +486,7 @@ input[type=number] {
     <h1>🎬 Las multiplicaciones 🎬</h1>
 
     <div style="display:flex; justify-content:center; margin-top:20px;">
-        <video id="videoMultiplicaciones" width="800" height="500" controls autoplay>
+        <video id="videoMultiplicaciones" width="800" height="500" controls>
             <source src="video.mp4" type="video/mp4">
         </video>
     </div>
@@ -772,11 +772,11 @@ const loginPass    = document.getElementById("loginPass");
 const mensajeLogin  = document.getElementById("mensajeLogin");
 document.getElementById("btnLogin").addEventListener("click", function () {
     const musica = document.getElementById("musica");
-    musica.volume = 0.2;
+    musica.volume = 0.5;
+    initAudio();
     musica.play().then(() => {
         document.getElementById("btnMusica").innerText = "🔊";
     }).catch(()=>{});
-    initAudio();
     speechSynthesis.getVoices();
     audioActivado = true;
     verificarLogin();
