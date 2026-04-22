@@ -28,12 +28,6 @@
     animation: flotar 60s linear infinite;
     user-select: none;
 }
-.fondoItem {
-    position: absolute;
-    font-size: 2.5rem;
-    opacity: 0.6;
-    animation: flotar 15s linear infinite;
-}
 
 @keyframes flotar {
     0% { transform: translateY(0vh) rotate(0deg); opacity: 0.3; }
@@ -52,6 +46,17 @@ body {
     color: #333;
 }
 
+#menu,
+#final,
+#progresoAlumnos {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; 
+    align-items: center;    
+    height: 100vh;
+
+    padding-top: 120px; 
+}
 
 .pantalla {
     display: none;
@@ -278,7 +283,7 @@ input::placeholder {
 
     font-size: 26px;
     font-weight: bold;
-    line-height: 1.8; /* 🔥 mejora lectura */
+    line-height: 1.8; 
 
     border-radius: 20px;
     background: rgba(255,255,255,0.95);
@@ -286,7 +291,7 @@ input::placeholder {
 
     text-align: center;
 
-    white-space: pre-line; /* 🔥 respeta saltos */
+    white-space: pre-line; 
 }
 .explicacion.correcta {
     color: #15803d;
@@ -380,7 +385,7 @@ animation:subirGlobo 2.5s linear forwards;
     0% { transform: translateY(0); opacity: 1; }
     100% { transform: translateY(-500px); opacity: 0; }
 }
-/* 🔥 QUITAR FLECHITAS DE INPUT NUMBER */
+
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
     -webkit-appearance: none;
@@ -391,18 +396,43 @@ input[type=number] {
     -moz-appearance: textfield;
     appearance: textfield;
 }
+
+#progresoAlumnos table {
+    margin: 20px auto;
+    border-collapse: collapse;
+    width: 90%;
+    max-width: 950px;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+}
+#progresoAlumnos th, #progresoAlumnos td {
+    padding: 14px;
+    border: 1px solid #ddd;
+    text-align: center;
+}
+#progresoAlumnos th {
+    background: #ec4899;
+    color: white;
+    font-weight: bold;
+}
 </style>
 
 </head>
 <body class="modo-claro">
+<audio id="musica" loop>
+  <source src="musica_proyecto.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="audioTutorial">
+  <source src="Audio Tutorial.mp3" type="audio/mpeg">
+</audio>
+
 <div id="fondoAnimado"></div>
 
 <div id="avatarJuego"></div>
 <div id="burbujaAvatar"></div>
-
-
-
-
 
 <div id="login" class="pantalla" style="display:block; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh;">
     <h1>🔐 Iniciar Sesión 🔐</h1>
@@ -420,6 +450,7 @@ input[type=number] {
     <p style="font-size: 1.15rem; margin: 8px 0 20px; color: #555555; max-width: 90%;">
     </p>
     
+
     <input id="nombre" placeholder="Escribe tu nombre aquí 😊" autocomplete="off">
     
     <h2>Elige tu avatar favorito:</h2>
@@ -440,7 +471,11 @@ input[type=number] {
         <span class="avatar" onclick="seleccionarAvatar('🐧')">🐧</span>
         <span class="avatar" onclick="seleccionarAvatar('🐨')">🐨</span> 
         <span class="avatar" onclick="seleccionarAvatar('🦏')">🦏</span>
-
+        <span class="avatar" onclick="seleccionarAvatar('🐊')">🐊</span>
+        <span class="avatar" onclick="seleccionarAvatar('🦅')">🦅</span>
+        <span class="avatar" onclick="seleccionarAvatar('🦋')">🦋</span>
+        <span class="avatar" onclick="seleccionarAvatar('🦘')">🦘</span>
+        <span class="avatar" onclick="seleccionarAvatar('🦄')">🦄</span>
 
     </div>
     
@@ -448,34 +483,55 @@ input[type=number] {
     
     <button id="btnComenzar" class="boton" disabled onclick="guardar()">🚀 ¡JUGAR YA! 🚀 </button>
 </div>
+<div id="videos" class="pantalla">
+    <h1>🎬 Las multiplicaciones 🎬</h1>
+
+    <div style="display:flex; justify-content:center; margin-top:20px;">
+        <video id="videoMultiplicaciones" width="800" height="500" controls autoplay>
+            <source src="video.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <br><br>
+</div>
 
 <button id="btnRegresarGlobal" class="boton regreso" onclick="regresarPantalla()" 
-style="position:fixed; top:12px; right:80px; z-index:1000; display:none;">
+style="position:fixed; top:12px; right:120px; z-index:1000; display:none;">
 ⬅ Regresar
-<button id="btnTutorial" class="boton" onclick="mostrarTutorial()" 
-style="position:fixed; top:12px; left:60px; z-index:1000; display:none;">
-📘 Tutorial
-</button>
 </button>
 
+<button id="btnTutorial" class="boton" onclick="mostrarTutorial()" 
+style="position:fixed; top:12px; left:12px; z-index:1000; display:block;">
+📚 Tutorial
+</button>
+
+<button id="btnMusica" class="boton" onclick="toggleMusica()"
+style="position:fixed; top:12px; right:12px; z-index:1000; display:none;">
+🔊 
+</button>
+
+</button>
 <div id="tutorial" class="pantalla">
     <h1>📘 ¿Cómo jugar? 📘</h1>
 
     <div id="cajaTutorial" class="explicacion">
         <p id="textoTutorial">😊 Bienvenido al juego 😊</p>
     </div>
-
+<div style="display:flex; flex-wrap:wrap; justify-content:center; gap:12px; margin:20px 0;">
     <button class="boton" onclick="anteriorPaso()">⬅ Anterior</button>
     <button class="boton" onclick="siguientePaso()">Siguiente ➡</button>
-    <br><br>
-    <button class="boton" onclick="irDesdeTutorial()">🚀 Ir al juego 🚀</button>
+    <button class="boton" onclick="mostrarVideoTutoria()">🎥 Ver Video Tutorial 🎥</button>
+    <button class="boton" onclick="irDesdeTutorial()">🚀 Ir al Juego 🚀</button>
+</div>
 </div>
 
 <div id="menu" class="pantalla">
     <h1 id="saludo"></h1>
     <h2>¿Qué tabla quieres practicar?</h2>
     <div id="tablas"></div>
-    <button class="boton" onclick="mostrarTablas()">📚 TABLAS MÁGICAS 📚 </button>
+    <button class="boton" onclick="tablaActualCompletar=1; mostrarTablas()">📚 Tablas Mágicas 📚 </button>
+    <button class="boton" onclick="mostrarVideos()">🎬 Aventura de Multiplicaciones 🎬</button>
+    <button class="boton" onclick="mostrarProgresoAlumnos()">👨‍👩‍👧‍👦 Progreso de Alumnos 👨‍👩‍👧‍👦</button>
 </div>
 
 <div id="tablasOrden" class="pantalla">
@@ -483,7 +539,7 @@ style="position:fixed; top:12px; left:60px; z-index:1000; display:none;">
     <div id="contenidoTablas"></div>
     <button class="boton" onclick="verificarCompletar()">✅ Verificar Respuestas</button>
     <button class="boton" onclick="reiniciarCompletar()">🔄 Reiniciar</button>
-    <button class="boton" id="botonSiguiente" onclick="avanzarNivel()">➡️ Siguiente Nivel</button>
+    <button class="boton" id="botonSiguiente" onclick="intentarAvanzar()">➡️ Siguiente Tabla</button>
 </div>
 
 <div id="juego" class="pantalla">
@@ -497,13 +553,9 @@ style="position:fixed; top:12px; left:60px; z-index:1000; display:none;">
 <div id="pregunta" class="pregunta"></div>
 
 <div id="escenarioGlobos">
-<div id="jirafa">🦒</div>
-
-</div>
 
 </div>
     <div class="topbar">
-    <span id="puntos">🏆 </span>5/5<span id="progreso"></span>
     </div>
     <h2>📚 Resuelve esta multiplicación</h2>
     <div id="pregunta" class="pregunta"></div>
@@ -517,15 +569,91 @@ style="position:fixed; top:12px; left:60px; z-index:1000; display:none;">
     <div id="scoreDetalles"></div>
 </div>
 
-<script>
-let vocesDisponibles = [];
+<div id="progresoAlumnos" class="pantalla">
+    <h1>🔒 Progreso de los Alumnos 🔒</h1>
+    <div id="pantallaPassword">
+        <h2>Ingresa la contraseña de acceso</h2>
+        <input id="passProgreso" type="password" placeholder="Contraseña de padres/maestros" style="width:280px;">
+        <br><br>
+        <button class="boton" onclick="verificarPasswordProgreso()">Acceder</button>
+        <button class="boton" onclick="mostrar('menu')">Cancelar</button>
+        <p id="errorPassword" style="color:red; font-weight:bold; margin-top:15px;"></p>
+    </div>
 
+    <div id="contenidoProgreso" style="display:none;">
+        
+        <table style="margin:25px auto; width:90%; max-width:1000px;">
+            <thead>
+                <tr>
+                    <th>Alumno</th>
+                    <th>Fecha</th>
+                    <th>Tabla</th>
+                    <th>Puntos</th>
+                    <th>Aciertos</th>
+                    <th>Calificación</th>
+                </tr>
+            </thead>
+            <tbody id="tablaProgresoBody"></tbody>
+        </table>
+    </div>
+</div>
+
+<div id="videoTutoria" class="pantalla">
+    <h1>🎥 Video Tutorial 🎥</h1>
+    
+    <div style="display:flex; justify-content:center; margin-top:30px;">
+        <video id="videoTutor" width="800" height="550" controls>
+            <source src="VIDEO TUTORIAL LISTO.mp4" type="video/mp4">
+        </video>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script>
+const SUPABASE_URL = "https://zlnrwgbeorlzgcxnamrl.supabase.co";
+const SUPABASE_KEY = "sb_publishable_g4iyhyJgqw5ZRA2Yg3S_LA_GznHyqvH";
+
+const clienteSupabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+async function guardarEnSupabase(alumno, tabla, puntos, aciertos, calificacion) {
+  const { data, error } = await clienteSupabase
+    .from("progreso")
+    .insert([
+      { alumno, tabla, puntos, aciertos, calificacion }
+    ]);
+
+  if (error) console.log(error);
+}
+
+</script>
+<script>
+
+let vocesDisponibles = [];
+let audioActivado = false;
+let loginCorrecto = false;
+
+function activarAudioGlobal() {
+    if (audioActivado) return;
+
+    const musica = document.getElementById("musica");
+    const audioTutorial = document.getElementById("audioTutorial");
+
+    musica.play().then(() => {
+        musica.pause();
+        musica.currentTime = 0;
+    }).catch(()=>{});
+
+    audioTutorial.play().then(() => {
+        audioTutorial.pause();
+        audioTutorial.currentTime = 0;
+    }).catch(()=>{});
+
+    audioActivado = true;
+}
 speechSynthesis.onvoiceschanged = () => {
     vocesDisponibles = speechSynthesis.getVoices();
 };
     function crearFondoAnimado() {
     const fondo = document.getElementById("fondoAnimado");
-    const elementos = ["🐶","🐱","🐵","🦊","🐼","🐸","🐺","🐦","🐴","🐬","🐿️","🐻","🐧","🐨","🦏","1️⃣","2️⃣","3️⃣","4️⃣","5️⃣","6️⃣","7️⃣","8️⃣","9️⃣","0️⃣","🎈"];
+    const elementos = ["🐶","🐱","🐵","🦊","🐼","🐸","🐺","🐦","🐴","🐬","🐿️","🐻","🐧","🐨","🦏","1️⃣","2️⃣","3️⃣","4️⃣","5️⃣","6️⃣","7️⃣","8️⃣","9️⃣","0️⃣","🎈" ];
 
     for (let i = 0; i < 20; i++) {
         const item = document.createElement("div");
@@ -541,6 +669,24 @@ speechSynthesis.onvoiceschanged = () => {
 }
 let audioContext;
 let timeoutError = null;
+function toggleMusica() {
+    const musica = document.getElementById("musica");
+    const btn = document.getElementById("btnMusica");
+
+    if (musica.paused) {
+        musica.play().catch(()=>{});
+        btn.innerText = "🔊";
+    } else {
+        musica.pause();
+        btn.innerText = "🔇";
+    }
+}
+
+musica.volume = 0.7;
+
+function mostrarVideos() {
+    mostrar("videos");
+}
 function initAudio() {
     if (!audioContext) {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -566,59 +712,20 @@ function playTone(frequency, duration, type = 'sine') {
 }
 
 function reproducirCorrecto() {
-    // Tono ascendente para correcto
-    playTone(523, 0.2); // Do
-    setTimeout(() => playTone(659, 0.2), 100); // Mi
-    setTimeout(() => playTone(784, 0.3), 200); // Sol
+    playTone(523, 0.2);
+    setTimeout(() => playTone(659, 0.2), 100);
+    setTimeout(() => playTone(784, 0.3), 200);
 }
 
 function reproducirIncorrecto() {
-    // Tono descendente para incorrecto
-    playTone(392, 0.3); // Sol bajo
-    setTimeout(() => playTone(330, 0.3), 150); // Mi bajo
-    setTimeout(() => playTone(262, 0.4), 300); // Do bajo
+    playTone(392, 0.3);
+    setTimeout(() => playTone(330, 0.3), 150);
+    setTimeout(() => playTone(262, 0.4), 300);
 }
-function hablarTutorial(texto) {
 
-    let textoVoz = texto
-        .replace(/\+/g, " más ")
-        .replace(/=/g, " es igual a ")
-        .replace(/×/g, " por ");
-
-    textoVoz = textoVoz.replace(/[^\p{L}\p{N}\p{P}\p{Z}\n]/gu, '');
-
-    const mensaje = new SpeechSynthesisUtterance(textoVoz);
-
-    mensaje.lang = "es-ES";
-    mensaje.rate = 0.9;
-    mensaje.pitch = 1.2;
-    mensaje.volume = 1;
-
-    let voz =
-        vocesDisponibles.find(v => v.lang === "es-MX") ||
-        vocesDisponibles.find(v => v.lang === "es-ES") ||
-        vocesDisponibles.find(v => v.lang.startsWith("es"));
-
-    if (voz) {
-        const vozFemenina = vocesDisponibles.find(v =>
-            v.lang.startsWith("es") &&
-            (v.name.toLowerCase().includes("female") ||
-             v.name.toLowerCase().includes("maria") ||
-             v.name.toLowerCase().includes("sofia") ||
-             v.name.toLowerCase().includes("paulina") ||
-             v.name.toLowerCase().includes("google"))
-        );
-
-        mensaje.voice = vozFemenina || voz;
-    }
-
-    speechSynthesis.cancel();
-    speechSynthesis.speak(mensaje);
-}
 crearFondoAnimado();
 
-const niveles = ['Fácil', 'Intermedio', 'Difícil'];
-let nivelActual = 0;
+let tablaActualCompletar = 1;
 
     function lanzarGlobos(){
 
@@ -651,6 +758,7 @@ let preguntasHechas = 0;
 let respuestaCorrecta;
 let cronometro;
 let bloqueado = false;
+let numerosUsados = [];
 
 const TOTAL_PREGUNTAS = 5;
 
@@ -665,7 +773,15 @@ const loginPass    = document.getElementById("loginPass");
 const mensajeLogin  = document.getElementById("mensajeLogin");
 document.getElementById("btnLogin").addEventListener("click", function () {
     activarAudio();
-    speechSynthesis.getVoices(); // 🔥 importante
+    speechSynthesis.getVoices();
+
+    activarAudioGlobal();
+
+const musica = document.getElementById("musica");
+musica.volume = 0.2;
+
+musica.play().catch(()=>{});
+
     verificarLogin();
 });
 function verificarLogin() {
@@ -673,6 +789,7 @@ function verificarLogin() {
     const pass = parseInt(loginPass.value);
 
     if (usuario >= 1 && usuario <= 5 && pass === usuario) {
+         loginCorrecto = true; 
 
         mostrar("inicio");
         mensajeLogin.innerText = "";
@@ -684,24 +801,26 @@ function mostrar(id) {
     speechSynthesis.cancel();
     document.querySelectorAll(".pantalla").forEach(p => p.style.display = "none");
     
-   if (id === "login") {
-    document.getElementById(id).style.display = "flex";
-} else {
-    document.getElementById(id).style.display = "block";
+    if (id === "login") {
+        document.getElementById(id).style.display = "flex";
+    } else {
+        document.getElementById(id).style.display = "block";
+    }
     const btnTutorial = document.getElementById("btnTutorial");
-
-if (id === "inicio" || id === "menu" || id === "tablasOrden") {
+    if (id === "inicio" || id === "menu" || id === "tablasOrden" || id === "login") {
     btnTutorial.style.display = "block";
-} else {
+    } else {
     btnTutorial.style.display = "none";
-}
-}
-    
-    av.classList.remove("activo");
-    if (id === "juego") av.classList.add("activo");
+    }
+
+    const btnMusica = document.getElementById("btnMusica");
+    if (id === "login") {
+        btnMusica.style.display = "none";
+    } else {
+        btnMusica.style.display = "block";
+    }
 
     const botonRegresar = document.getElementById("btnRegresarGlobal");
-
     if (id === "login") {
         botonRegresar.style.display = "none";
     } else {
@@ -741,13 +860,40 @@ for (let i = 1; i <= 10; i++) {
     b.onclick = () => iniciarJuego(i);
     document.getElementById("tablas").appendChild(b);
 }
+function intentarAvanzar() {
+    const inputs = document.querySelectorAll('.inputTabla');
+    let todasCorrectas = true;
 
+    inputs.forEach(input => {
+        const correcta = parseInt(input.dataset.correcta);
+        const valor = parseInt(input.value);
+
+        if (valor !== correcta) {
+            todasCorrectas = false;
+        }
+    });
+
+    if (!todasCorrectas) {
+        reproducirIncorrecto();
+
+        hablarAvatar(
+            "⛔ No puedes avanzar ⛔\n\nPrimero debes completar correctamente toda la tabla en la que te encuentras.\n\n¡Vamos, tú puedes! ",
+            7000,
+            true
+        );
+
+        return;
+    }
+
+    verificarCompletar();
+}
 
 function iniciarJuego(tabla) {
     tablaActual = tabla;
     puntos = 0;
     aciertos = 0;
     preguntasHechas = 0;
+    numerosUsados = [];
 
     mostrar("juego");
     nuevaPregunta();
@@ -763,7 +909,10 @@ function nuevaPregunta() {
     preguntasHechas++;
     document.getElementById("progreso").innerText = `${preguntasHechas}/${TOTAL_PREGUNTAS}`;
     
-    const num1 = Math.floor(Math.random() * 10) + 1;
+    const disponibles = [1,2,3,4,5,6,7,8,9,10].filter(n => !numerosUsados.includes(n));
+    if (disponibles.length === 0) numerosUsados = [];
+    const num1 = disponibles[Math.floor(Math.random() * disponibles.length)];
+    numerosUsados.push(num1);
     const num2 = tablaActual;
     respuestaCorrecta = num1 * num2;
     
@@ -790,7 +939,6 @@ function generarRespuestas(correcta) {
         }
     }
 
-    // Mezclar respuestas para que la correcta no esté siempre en el mismo globo
     function shuffleArray(a) {
         for (let i = a.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -900,29 +1048,45 @@ function verificar(respuesta) {
 
     document.getElementById("puntos").innerText = `🏆 ${puntos}`;
 }
-
 function finalizar() {
 
     clearInterval(cronometro);
     const porcentaje = (aciertos / TOTAL_PREGUNTAS) * 100;
+    const calificacion = (aciertos / TOTAL_PREGUNTAS) * 10;
     let medalla = "😔";
     
-    if (porcentaje === 100) medalla = "🏆";
-    else if (porcentaje >= 80) medalla = "🥇";
-    else if (porcentaje >= 60) medalla = "🥈";
-    else if (porcentaje >= 40) medalla = "🥉";
+    if (calificacion === 10) medalla = "🏆";
+    else if (calificacion >= 8) medalla = "🥇";
+    else if (calificacion >= 6) medalla = "🥈";
+    else if (calificacion >= 4) medalla = "🥉";
+
+
+    let textoCalificacion = "";
+
+    if (Math.round(calificacion) === 10) {
+        textoCalificacion = "10/10";
+    } else {
+        textoCalificacion = calificacion.toFixed(1) + " / 10";
+    }
     
     document.getElementById("medallaFinal").innerText = medalla;
     document.getElementById("resultadoNombre").innerText = `${avatar} ${nombreJugador}`;
     document.getElementById("scoreDetalles").innerHTML = `
         <strong>Aciertos:</strong> ${aciertos}/${TOTAL_PREGUNTAS}<br>
         <strong>Puntos:</strong> ${puntos}<br>
-        <strong>Porcentaje:</strong> ${porcentaje.toFixed(1)}%<br>
-
+        <strong>Calificación:</strong> ${textoCalificacion}<br>
     `;
     
     hablarAvatar(`¡Juego terminado! ${medalla}`, 2500);
     mostrar("final");
+
+guardarEnSupabase(
+    nombreJugador,
+    tablaActual,
+    puntos,
+    aciertos,
+    calificacion
+);
 }
 
 function hablarAvatar(texto, duracion, grande = false) {
@@ -945,7 +1109,6 @@ function hablarAvatar(texto, duracion, grande = false) {
         burbujaAv.style.top = "50%";
         burbujaAv.style.transform = "translate(-50%, -50%)";
     } else {
-        // Para modo grande, la posicion se define vía clase, pero aun queremos centrar
         burbujaAv.style.left = "50%";
         burbujaAv.style.top = "50%";
         burbujaAv.style.transform = "translate(-50%, -50%)";
@@ -964,46 +1127,47 @@ function hablarAvatar(texto, duracion, grande = false) {
 function mostrarTablas() {
     const contenido = document.getElementById("contenidoTablas");
     contenido.innerHTML = "";
-    
-    let tablasDelNivel;
-    if (nivelActual === 0) {
-        tablasDelNivel = [1, 2, 3];
-    } else if (nivelActual === 1) {
-        tablasDelNivel = [4, 5, 6];
-    } else {
-        tablasDelNivel = [7, 8, 9, 10];
-    }
-    
-    for (let tabla of tablasDelNivel) {
-        const card = document.createElement("div");
-        card.classList.add("tabla-card");
-        
-        let html = `<h3>Tabla del ${tabla}</h3>`;
-        for (let i = 1; i <= 10; i++) {
-            const correcta = tabla * i;
-            const mostrarNum1 = Math.random() > 0.5;
-            if (mostrarNum1) {
-                html += `<div>${tabla} × <input type="number" class="inputTabla" data-correcta="${correcta}" data-tabla="${tabla}" data-i="${i}" placeholder="?" min="1" max="100"> = ${correcta}</div>`;
-            } else {
-                html += `<div>${tabla} × ${i} = <input type="number" class="inputTabla" data-correcta="${correcta}" data-tabla="${tabla}" data-i="${i}" placeholder="?" min="1" max="100"></div>`;
-            }
+
+    document.getElementById("tituloTablas").innerText = 
+        `✏️ Completa la Tabla del ${tablaActualCompletar}`;
+
+    const card = document.createElement("div");
+    card.classList.add("tabla-card");
+
+    let html = `<h3>Tabla del ${tablaActualCompletar}</h3>`;
+
+    for (let i = 1; i <= 10; i++) {
+        const correcta = tablaActualCompletar * i;
+
+        const ocultarResultado = Math.random() > 0.5;
+
+        if (ocultarResultado) {
+            html += `<div>${tablaActualCompletar} × ${i} = 
+            <input type="number" class="inputTabla" 
+            data-correcta="${correcta}" 
+            placeholder="?" min="1" max="100"></div>`;
+        } else {
+            html += `<div>${tablaActualCompletar} × 
+            <input type="number" class="inputTabla" 
+            data-correcta="${i}" 
+            placeholder="?" min="1" max="10"> = ${correcta}</div>`;
         }
-        
-        card.innerHTML = html;
-        contenido.appendChild(card);
     }
-    
+
+    card.innerHTML = html;
+    contenido.appendChild(card);
+
     mostrar("tablasOrden");
 }
 
 function verificarCompletar() {
     const inputs = document.querySelectorAll('.inputTabla');
     let todasCorrectas = true;
-    const errores = [];
-    
+
     inputs.forEach(input => {
-        const correcta = parseInt(input.dataset.correcta, 10);
-        const valor = parseInt(input.value, 10);
+        const correcta = parseInt(input.dataset.correcta);
+        const valor = parseInt(input.value);
+
         if (valor === correcta) {
             input.style.borderColor = 'green';
             input.style.backgroundColor = '#d4edda';
@@ -1011,34 +1175,43 @@ function verificarCompletar() {
             input.style.borderColor = 'red';
             input.style.backgroundColor = '#f8d7da';
             todasCorrectas = false;
-            errores.push({ tabla: input.dataset.tabla, i: input.dataset.i, correcta, valor });
         }
     });
-    
-    if (todasCorrectas) {
-        reproducirCorrecto();
 
-        if (nivelActual < niveles.length - 1) {
-            hablarAvatar(`¡Perfecto! Nivel ${niveles[nivelActual]} completado. Pulsa “Siguiente Nivel” para continuar.`, 4000);
-        } else {
-            hablarAvatar('🎉 ¡Felicidades! Completaste Difícil. Has terminado todas las tablas. 🎉', 4500);
+if (todasCorrectas) {
+
+        if (tablaActualCompletar < 10) {
+            hablarAvatar(
+                `🎉 ¡Muy bien! Terminaste la tabla del ${tablaActualCompletar}\n\nAhora sigue la siguiente 🚀`,
+                7000
+            );
+
+            tablaActualCompletar++;
+
             setTimeout(() => {
-                mostrar('menu');
-                nivelActual = 0;
-                document.getElementById('tituloTablas').innerText = `✏️ Completa las Tablas ✏️ - ${niveles[nivelActual]}`;
-                document.getElementById('contenidoTablas').innerHTML = '';
-            }, 1700);
+                mostrarTablas();
+            }, 2000);
+
+        } else {
+            hablarAvatar(
+                "🎉 ¡Felicidades! lo lograste 🎉\n\nCompletaste todas las tablas del 1 al 10 🏆",
+                5000
+            );
+
+            setTimeout(() => {
+                mostrar("menu");
+                tablaActualCompletar = 1;
+            }, 3000);
         }
+
     } else {
         reproducirIncorrecto();
-        let mensaje = 'Vamos a corregirlo juntos:\n';
-        errores.forEach(err => {
-            mensaje += `${err.tabla} × ${err.i} = ${err.correcta} (no ${err.valor || 'vacío'})\n`;
-        });
-        hablarAvatar(mensaje, 7000, true);
+        hablarAvatar(
+            "😅 Hay algunos errores 😅 \n\nTermina bien la tabla para poder avanzar",
+            7000
+        );
     }
 }
-
 function reiniciarCompletar() {
     document.querySelectorAll('.inputTabla').forEach(input => {
         input.value = '';
@@ -1066,88 +1239,130 @@ function avanzarNivel() {
 let pasoTutorial = 0;
 
 const pasos = [
+  {
+    texto: "👋✨ Hola niños y niñas, bienvenidos a este divertido juego de multiplicaciones 🎮➕",
+    inicio: 0,
+    fin: 4.2
+  },
+  {
+    texto: "🔐 Bueno, para iniciar con este juego, lo primero que tendrás que hacer es iniciar sesión 🔐\n\nEscribiendo un número del 1️⃣ al 5️⃣ como usuario\n\n🔑 Y la misma contraseña 🔑",
+    inicio: 4.3,
+    fin: 13
+  },
+  {
+    texto: "📝 Después escribirán su nombre 📝 \n\n🧑‍🚀 Y elegirán el avatar que más les guste 🧑‍🚀",
+    inicio: 13.1,
+    fin: 17.5
+  },
+  {
+    texto: "🚀 Cuando estén listos 🚀 \n\n 👆 Presionan el botón para comenzar 👆",
+    inicio: 17.6,
+    fin: 20.5
+  },
+  {
+    texto: "📋 En el menú verán varias opciones. 📋\n\n🎯 Pueden elegir una tabla para jugar 🎯\n✨ Practicar en las tablas mágicas completando números ✨\n🎥 Ver videos 🎥\n👨‍👩‍👧 O con ayuda de un adulto revisar su progreso en el juego 👨‍👩‍👧 ",
+    inicio: 20.6,
+    fin: 31.9
+  },
+  {
+    texto: "🎲 Cuando seleccionen una tabla del 1 al 10 y empiecen a jugar 🎲\n\n✖️ Aparecerá una multiplicación ✖️\n\n🎈 Y muchos globos con números 🎈",
+    inicio: 32,
+    fin: 38.9
+  },
+  {
+    texto: " 🎯 Su misión es: 🎯\n\n👆 Tocar el globo que tenga la respuesta correcta 👆",
+    inicio: 39,
+    fin: 42.3
+  },
+  {
+    texto: "🎉 Si aciertan 🎉\n\n 🏆 Ganan puntos 🏆\n\n 😅 Si se equivocan no pasa nada, el juego les enseñará cómo hacerlo paso a paso 😅",
+    inicio: 42.4,
+    fin: 49
+  },
+  {
+    texto: "❓ Cada juego en cada tabla tiene cinco preguntas ❓",
+    inicio: 49.1,
+    fin: 52
+  },
+  {
+    texto: "🥇 Al final recibirán una medalla según como lo hayan hecho🥇\n\n📊 Y una calificación de acuerdo a sus aciertos 📊",
+    inicio: 52.1,
+    fin: 58
+  },
+  {
+    texto: "✨ En las tablas mágicas, deben completar los espacios correctamente para poder avanzar ✨",
+    inicio: 58.1,
+    fin: 63
+  },
+  {
+    texto: "🔁 Si hay errores 🔁\n\n 💪 Solo deben corregirlos e intentarlo de nuevo 💪",
+    inicio: 63.1,
+    fin: 66.5
+  },
+  {
+    texto: "🛠️ También pueden usar: 🛠️\n\n📘 El botón de tutorial si necesitan ayuda 📘 \n🎵 El botón de música para encender o apagar el sonido 🎵 \n↩️ Y el botón de regresar para volver atrás ↩️",
+    inicio: 66.6,
+    fin: 75.3
+  },
+  {
+    texto: "🌟 Recuerden 🌟 \n\n 🧠Lo importante es aprender, intentar y divertirse 🧠",
+    inicio: 75.4,
+    fin: 79.
+  },
+  {
+    texto: "🍀 Les deseo muy buena suerte 🍀 ",
+    inicio: 79.1,
+    fin: 84
+  }
 
-"👋 ¡Hola, niños y niñas! 👋\n\n🎮 Vamos a aprender jugando y a descubrir el mundo de las multiplicaciones de forma divertida 🎮",
-
-"🎯 Tu misión es muy simple:\n\nResolver cada multiplicación correctamente ",
-
-"🧠 Ejemplo:\n\n3 x 4\n\nSignifica sumar varias veces el mismo número ",
-
-"👉 En este caso:\n\n4 + 4 + 4 ",
-
-"🍎 Imagina esto:\n\nTienes 3 grupos\n\nY cada grupo tiene 4 manzanas ",
-
-"👉 Entonces cuentas:\n\n4 + 4 + 4\n\nEs igual a 12 ",
-
-"🎈 En el juego aparecerán globos con diferentes números ",
-
-"👆 Debes tocar el globo\n\nQue tenga la respuesta correcta  ",
-
-"🎉 Si aciertas:\n\nGanas puntos y verás cosas divertidas ",
-
-"😅 Si te equivocas:\n\nNo pasa nada\n\nYo te explico paso a paso ",
-
-"🏆 Al final:\n\nGanarás una medalla según tu desempeño ",
-
-"💡 Consejo:\n\nPiensa con calma\n\n¡Tú puedes hacerlo! ",
-
-"🚀 ¿Listo?\n\n¡Vamos a empezar la aventura matemática! "
 ];
 function mostrarTutorial() {
+    activarAudioGlobal();
+
+    const audio = document.getElementById("audioTutorial");
+    audio.play().then(() => {
+        audio.pause();
+        audio.currentTime = 0;
+    }).catch(()=>{});
+
     pasoTutorial = 0;
-    actualizarTutorial();
     mostrar("tutorial");
+
+    actualizarTutorial();
 }
-function irDesdeTutorial() {
-    if (nombreJugador === "" || avatar === "") {
-
-        setTimeout(() => {
-            mostrar("inicio");
-        }, 1500);
-
-    } else {
-        mostrar("menu");
-
-    }
-}
-
 function actualizarTutorial() {
-    const texto = pasos[pasoTutorial];
+    const paso = pasos[pasoTutorial];
     const caja = document.getElementById("cajaTutorial");
+    const audio = document.getElementById("audioTutorial");
 
-    document.getElementById("textoTutorial").innerText = texto;
+    document.getElementById("textoTutorial").innerText = paso.texto;
 
-    // 🔥 animación divertida
     caja.style.transform = "scale(0.9)";
     setTimeout(() => {
         caja.style.transform = "scale(1)";
     }, 150);
 
-    // 🔊 sonido suave
-    playTone(700, 0.08);
+    audio.pause();
+    audio.currentTime = 0;
+    audio.ontimeupdate = null;
 
-    setTimeout(() => {
-        hablarTutorial(texto);
-    }, 200);
+audio.pause();
+audio.currentTime = paso.inicio;
+
+setTimeout(() => {
+    audio.play().catch(()=>{});
+}, 100);
+    audio.ontimeupdate = function () {
+        if (audio.currentTime >= paso.fin) {
+            audio.pause();
+            audio.ontimeupdate = null;
+        }
+    };
 }
-
 function siguientePaso() {
     if (pasoTutorial < pasos.length - 1) {
         pasoTutorial++;
         actualizarTutorial();
-    } else {
-
-
-        if (nombreJugador === "" || avatar === "") {
-            setTimeout(() => {
-                mostrar("inicio");
-            }, 1500);
-        } else {
-          setTimeout(() => {
-                mostrar("menu");
-            }, 1200);
-
-        }
     }
 }
 
@@ -1160,7 +1375,25 @@ function anteriorPaso() {
 
 function regresarPantalla() {
 
-    // 🔥 Si estás en tutorial → regresar a inicio
+    const audio = document.getElementById("audioTutorial");
+    if (audio) {
+        audio.pause();
+        audio.currentTime = 0;
+        audio.ontimeupdate = null;
+    }
+
+    speechSynthesis.cancel();
+
+if (document.getElementById("videos").style.display === "block") {
+    const videoMult = document.getElementById("videoMultiplicaciones");
+    if (videoMult) {
+        videoMult.pause();
+        videoMult.currentTime = 0;
+    }
+    mostrar("menu");
+    return;
+}
+
     if (document.getElementById("tutorial").style.display === "block") {
         mostrar("inicio");
         return;
@@ -1168,7 +1401,6 @@ function regresarPantalla() {
 
     const burbuja = document.getElementById("burbujaAvatar");
 
-    // ✅ CORREGIDO (sin espacio)
     if (burbuja.style.display === "block") {
         burbuja.style.display = "none";
 
@@ -1177,13 +1409,13 @@ function regresarPantalla() {
             burbuja.timeoutId = null;
         }
 
-        // 🔥 MUY IMPORTANTE: cancelar explicación larga
         if (timeoutError) {
             clearTimeout(timeoutError);
             timeoutError = null;
         }
-         const escenario = document.getElementById("escenarioGlobos");
-         escenario.style.pointerEvents = "auto";
+
+        const escenario = document.getElementById("escenarioGlobos");
+        escenario.style.pointerEvents = "auto";
         bloqueado = false;
     }
 
@@ -1215,8 +1447,162 @@ function regresarPantalla() {
         mostrar("menu");
         return;
     }
+
+    if (document.getElementById("progresoAlumnos").style.display === "block") {
+        mostrar("menu");
+        return;
+    }
+
+   if (document.getElementById("videoTutoria").style.display === "block") {
+
+    const video = document.getElementById("videoTutor");
+
+  if (video) {
+        video.pause();         
+        video.currentTime = 0; 
+    }
+
+    mostrar("tutorial");
+    return;
+
+    }
 }
+
+document.addEventListener("click", () => {
+    activarAudioGlobal();
+    audio.play().then(() => {
+        audio.pause();
+        audio.currentTime = 0;
+    }).catch(()=>{});
+}, { once: true });
+const PASSWORD_PROGRESO = "1234";  
+
+function mostrarProgresoAlumnos() {
+    mostrar("progresoAlumnos");
+    document.getElementById("pantallaPassword").style.display = "block";
+    document.getElementById("contenidoProgreso").style.display = "none";
+    document.getElementById("passProgreso").value = "";
+    document.getElementById("errorPassword").innerText = "";
+}
+
+function verificarPasswordProgreso() {
+    const passIngresada = document.getElementById("passProgreso").value;
+    if (passIngresada === PASSWORD_PROGRESO) {
+        document.getElementById("pantallaPassword").style.display = "none";
+        document.getElementById("contenidoProgreso").style.display = "block";
+        cargarProgresoTabla();
+    } else {
+        document.getElementById("errorPassword").innerText = "❌ Contraseña incorrecta ❌ ";
+    }
+}
+
+function volverDesdeProgreso() {
+    mostrar("menu");
+}
+async function cargarProgresoTabla() {
+    const tbody = document.getElementById("tablaProgresoBody");
+    tbody.innerHTML = "";
+
+    const { data, error } = await clienteSupabase
+        .from("progreso")
+        .select("*")
+        .order("id", { ascending: false });
+
+    if (error) {
+        console.log(error);
+        tbody.innerHTML = `<tr><td colspan="7">Error al cargar datos</td></tr>`;
+        return;
+    }
+
+    if (!data || data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7">Aún no hay registros de progreso.</td></tr>`;
+        return;
+    }
+
+    data.forEach((reg, index) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${reg.alumno}</td>
+            <td>${reg.created_at ? new Date(reg.created_at).toLocaleDateString('es-ES') : ''}</td>
+            <td>Tabla ${reg.tabla}</td>
+            <td>${reg.puntos}</td>
+            <td>${reg.aciertos}</td>
+            <td>${reg.calificacion}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+function eliminarRegistro(index) {
+    let registros = JSON.parse(localStorage.getItem("progresoAlumnos")) || [];
+    
+    if (confirm("¿Eliminar este registro?")) {
+        registros.splice(index, 1);
+        localStorage.setItem("progresoAlumnos", JSON.stringify(registros));
+        cargarProgresoTabla();
+    }
+}
+
+function agregarRegistroManual() {
+    const alumno = prompt("Nombre del alumno:");
+    if (!alumno) return;
+    const tabla = prompt("Tabla practicada (número):", "5");
+    const puntos = prompt("Puntos obtenidos:", "40");
+    const aciertos = prompt("Aciertos (ej: 4/5):", "4/5");
+    const porcentaje = prompt("Porcentaje:", "80");
+
+    let registros = JSON.parse(localStorage.getItem("progresoAlumnos")) || [];
+    registros.push({
+        alumno: alumno,
+        fecha: new Date().toLocaleDateString('es-ES'),
+        tabla: tabla,
+        puntos: puntos,
+        aciertos: aciertos,
+        porcentaje: porcentaje + "%"
+    });
+    localStorage.setItem("progresoAlumnos", JSON.stringify(registros));
+    cargarProgresoTabla();
+}
+function irDesdeTutorial() {
+
+    const audio = document.getElementById("audioTutorial");
+    if (audio) {
+        audio.pause();
+        audio.currentTime = 0;
+        audio.ontimeupdate = null;
+    }
+
+    if (!loginCorrecto) {
+        mostrar("login");
+        return;
+    }
+
+    if (nombreJugador !== "" && avatar !== "") {
+        mostrar("menu");
+        document.getElementById("saludo").innerText = avatar + " ¡Hola " + nombreJugador + "!";
+    } else {
+        mostrar("inicio");
+    }
+}
+function mostrarVideoTutoria() {
+
+    const audio1 = document.getElementById("audioTutorial");
+    if (audio1) {
+        audio1.pause();
+        audio1.currentTime = 0;
+        audio1.ontimeupdate = null;
+    }
+
+    mostrar("videoTutoria");
+
+    const video = document.getElementById("videoTutor");
+    if (video) {
+        video.currentTime = 0;
+        video.play().catch(() => {});
+    }
+}
+
 
 </script>
 </body>
-</html>ç
+</html>
