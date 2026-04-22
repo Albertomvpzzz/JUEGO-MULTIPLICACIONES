@@ -608,7 +608,7 @@ style="position:fixed; top:12px; right:12px; z-index:1000; display:none;">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 <script>
 const SUPABASE_URL = "https://zlnrwgbeorlzgcxnamrl.supabase.co";
-const SUPABASE_KEY = "sb_publishable_g4iyhyJgqw5ZRA2Yg3S_LA_GznHyqvH";
+const SUPABASE_KEY = "https://zlnrwgbeorlzgcxnamrl.supabase.co/rest/v1/";
 
 const clienteSupabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 async function guardarEnSupabase(alumno, tabla, puntos, aciertos, calificacion) {
@@ -771,16 +771,12 @@ const loginUsuario = document.getElementById("loginUsuario");
 const loginPass    = document.getElementById("loginPass");
 const mensajeLogin  = document.getElementById("mensajeLogin");
 document.getElementById("btnLogin").addEventListener("click", function () {
+    const musica = document.getElementById("musica");
+    musica.volume = 0.2;
+    musica.play().catch(()=>{});
     activarAudio();
     speechSynthesis.getVoices();
-
-    activarAudioGlobal();
-
-const musica = document.getElementById("musica");
-musica.volume = 0.2;
-
-musica.play().catch(()=>{});
-
+    audioActivado = true;
     verificarLogin();
 });
 function verificarLogin() {
