@@ -773,8 +773,10 @@ const mensajeLogin  = document.getElementById("mensajeLogin");
 document.getElementById("btnLogin").addEventListener("click", function () {
     const musica = document.getElementById("musica");
     musica.volume = 0.2;
-    musica.play().catch(()=>{});
-    activarAudio();
+    musica.play().then(() => {
+        document.getElementById("btnMusica").innerText = "🔊";
+    }).catch(()=>{});
+    initAudio();
     speechSynthesis.getVoices();
     audioActivado = true;
     verificarLogin();
