@@ -1178,8 +1178,8 @@ function verificarCompletar() {
     });
 
 if (todasCorrectas) {
-        reproducirCorrecto();
-
+        if (audioContext) audioContext.resume().then(() => reproducirCorrecto());
+        else reproducirCorrecto();
         if (tablaActualCompletar < 10) {
             hablarAvatar(
                 `🎉 ¡Muy bien! Terminaste la tabla del ${tablaActualCompletar}\n\nAhora sigue la siguiente 🚀`,
