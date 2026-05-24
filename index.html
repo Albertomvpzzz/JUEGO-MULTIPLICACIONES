@@ -1105,14 +1105,14 @@ function hablarAvatar(texto, duracion, grande = false) {
 
     if (!grande) {
         burbujaAv.style.left = "50%";
-        burbujaAv.style.top = "50%";
+        burbujaAv.style.top = "65%";
         burbujaAv.style.transform = "translate(-50%, -50%)";
     } else {
         burbujaAv.style.left = "50%";
-        burbujaAv.style.top = "50%";
+        burbujaAv.style.top = "65%";
         burbujaAv.style.transform = "translate(-50%, -50%)";
     }
-
+    
     if (burbujaAv.timeoutId) clearTimeout(burbujaAv.timeoutId);
 
     burbujaAv.timeoutId = setTimeout(() => {
